@@ -1,0 +1,84 @@
+%{
+	#include <stdio.h>
+	#include "zoomjoystrong.tab.h"
+ 	#include "zoomjoystrong.h"
+ 	void yyerror(const char* msg);
+	int yylex();
+	 
+%}
+
+%error-verbose
+%start statement_list
+
+%union {int i; float f;};
+
+%token END
+%token END_STATEMENT
+%token POINT
+%token LINE
+%token CIRCLE
+%token RECTANGLE
+%token SET_COLOR
+%token INT
+%token FLOAT
+
+%type<i> INT
+%type<f> FLOAT
+%type<str> END
+%type<str> END_STATEMENT
+%type<str> POINT
+%type<str> LINE
+%type<str> CIRCLE
+%type<str> RECTANGLE
+%type<str> SET_COLOR
+
+%%
+
+statement_list: statement exit
+		|statement statement_list exit
+;
+
+statement: rectangle_expr
+	|point_expr
+	|circle_expr
+	|line_expr
+	|color_expr
+;
+
+rectangle_expr:RECTANGLE INT INT INT INT END_STATEMENT
+	{
+	if($2 && $4 <= 1024rectangle($2, $3, $4, $5);}
+;
+
+point_expr: POINT INT INT END_STATEMENT
+{point($2, $3);}
+;
+
+circle_expr: CIRCLE INT INT INT END_STATEMENT
+{circle($2, $3, $4);}
+;
+
+line_expr: LINE INT INT INT INT END_STATEMENT
+{line($2, $3, $4, $5);}
+;
+
+color_expr: SET_COLOR INT INT INT END_STATEMENT
+{set_color($2, $3, $4);}
+;
+
+exit: END
+| END END_STATEMENT
+;
+
+%%
+
+int main(int argc, char** argv){
+  	setup();
+  	yyparse();
+	finish();
+	return 0;
+}
+
+void yyerror(const char* msg){
+	fprintf(stderr, "ERROR: %s\n", msg);
+}
