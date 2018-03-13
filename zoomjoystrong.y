@@ -1,4 +1,8 @@
 %{
+/** AUTHOR: Bryce Hutton
+    DATE 3/12/2018
+    Note: Lex file doesn't properly identify newlines. No idea why.
+    **/
 	#include <stdio.h>
 	#include "zoomjoystrong.tab.h"
  	#include "zoomjoystrong.h"
